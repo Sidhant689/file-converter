@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as bs from 'react-bootstrap';
 import { useDropzone } from 'react-dropzone';
 import { PDFDocument } from 'pdf-lib';
+import Resizer from 'react-image-file-resizer';
 
 const FileConversionModal = ({ show, onHide, conversion }) => {
   const [file, setFile] = useState(null);
@@ -59,9 +60,76 @@ const FileConversionModal = ({ show, onHide, conversion }) => {
       } catch (error) {
         console.error('Error converting image to PDF:', error);
       }
-    } else {
-      // Perform other conversion types
-      // ...
+    } 
+    else if(conversion.name === "JPG to PNG") {
+      try {
+        const startTime = performance.now(); // Get the start time
+
+        const options = {
+          width: 300, // Adjust width as needed
+          height: 300, // Adjust height as needed
+          format: 'png', // Convert to PNG format
+          quality: 1, // 1 is the highest quality
+        };
+
+        //const imageUrl = URL.createObjectURL(file);
+
+        Resizer.imageFileResizer(
+          file,
+        options.width,
+        options.height,
+        options.format,
+        options.quality,
+        0,
+        (blob) => {
+          const endTime = performance.now(); // Get the end time
+          const totalTime = endTime - startTime; // Calculate the total time taken
+
+          const convertedFileName = `${file.name.replace(/\.[^/.]+$/, '')}.png`;
+          const convertedFileUrl = URL.createObjectURL(blob);
+          setConvertedFile({ name: convertedFileName, url: convertedFileUrl, timeTaken: totalTime });
+          setProgress(100); // Set progress to 100%
+        },
+        'blob'
+        );
+      } catch (error) {
+        console.error('Error converting JPG to PNG:', error);
+      }
+    }
+    else if(conversion.name === "PNG to JPG") {
+      try {
+        const startTime = performance.now(); // Get the start time
+
+        const options = {
+          width: 300, // Adjust width as needed
+          height: 300, // Adjust height as needed
+          format: 'png', // Convert to PNG format
+          quality: 1, // 1 is the highest quality
+        };
+
+        //const imageUrl = URL.createObjectURL(file);
+
+        Resizer.imageFileResizer(
+          file,
+        options.width,
+        options.height,
+        options.format,
+        options.quality,
+        0,
+        (blob) => {
+          const endTime = performance.now(); // Get the end time
+          const totalTime = endTime - startTime; // Calculate the total time taken
+
+          const convertedFileName = `${file.name.replace(/\.[^/.]+$/, '')}.jpg`;
+          const convertedFileUrl = URL.createObjectURL(blob);
+          setConvertedFile({ name: convertedFileName, url: convertedFileUrl, timeTaken: totalTime });
+          setProgress(100); // Set progress to 100%
+        },
+        'blob'
+        );
+      } catch (error) {
+        console.error('Error converting JPG to PNG:', error);
+      }
     }
   };
 
